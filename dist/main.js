@@ -11,6 +11,7 @@ var Game = /** @class */ (function () {
         this.playerY = 0;
         this.peas = [];
         this.score = 0;
+        this.groundPattern = null;
         this.canvas = document.getElementById('game');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
@@ -19,6 +20,7 @@ var Game = /** @class */ (function () {
             throw new Error('Canvas not supported');
         this.ctx = ctx;
         this.scoreEl = document.getElementById('score');
+        this.createGroundPattern();
         this.reset();
         this.registerEvents();
         requestAnimationFrame(function () { return _this.loop(); });
@@ -57,6 +59,23 @@ var Game = /** @class */ (function () {
             _this.checkPea();
         });
     };
+    Game.prototype.createGroundPattern = function () {
+        var patternCanvas = document.createElement('canvas');
+        patternCanvas.width = 64;
+        patternCanvas.height = 32;
+        var pctx = patternCanvas.getContext('2d');
+        if (!pctx)
+            return;
+        pctx.fillStyle = '#6b5234';
+        pctx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+        pctx.fillStyle = '#5a472c';
+        for (var i = 0; i < 100; i++) {
+            var x = Math.random() * patternCanvas.width;
+            var y = Math.random() * patternCanvas.height;
+            pctx.fillRect(x, y, 1, 1);
+        }
+        this.groundPattern = this.ctx.createPattern(patternCanvas, 'repeat');
+    };
     Game.prototype.checkPea = function () {
         if (this.peas[this.playerY][this.playerX]) {
             this.peas[this.playerY][this.playerX] = false;
@@ -75,21 +94,53 @@ var Game = /** @class */ (function () {
         for (var y = 0; y < this.mapSize; y++) {
             for (var x = 0; x < this.mapSize; x++) {
                 var screen_1 = this.isoToScreen(x, y);
-                this.ctx.strokeStyle = '#555';
-                this.drawDiamond(screen_1.x, screen_1.y, this.tileWidth, this.tileHeight);
+                this.drawTile(screen_1.x, screen_1.y);
                 if (this.peas[y][x]) {
-                    this.ctx.fillStyle = 'green';
-                    this.ctx.beginPath();
-                    this.ctx.arc(screen_1.x, screen_1.y - this.tileHeight / 2, 6, 0, Math.PI * 2);
-                    this.ctx.fill();
+                    this.drawPeaPod(screen_1.x, screen_1.y - this.tileHeight / 2);
                 }
             }
         }
         // draw player
         var playerScreen = this.isoToScreen(this.playerX, this.playerY);
-        this.ctx.fillStyle = 'brown';
+        this.drawBear(playerScreen.x, playerScreen.y - this.tileHeight / 2);
+    };
+    Game.prototype.drawTile = function (x, y) {
+        if (this.groundPattern) {
+            this.ctx.fillStyle = this.groundPattern;
+        }
+        else {
+            this.ctx.fillStyle = '#6b5234';
+        }
+        this.drawDiamond(x, y, this.tileWidth, this.tileHeight, true);
+        this.ctx.strokeStyle = '#3a2f1a';
+        this.drawDiamond(x, y, this.tileWidth, this.tileHeight, false);
+    };
+    Game.prototype.drawPeaPod = function (x, y) {
+        this.ctx.fillStyle = '#2e8b57';
         this.ctx.beginPath();
-        this.ctx.arc(playerScreen.x, playerScreen.y - this.tileHeight / 2, 12, 0, Math.PI * 2);
+        this.ctx.ellipse(x, y, 10, 5, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.fillStyle = '#9acd32';
+        for (var i = -1; i <= 1; i++) {
+            this.ctx.beginPath();
+            this.ctx.arc(x + i * 4, y, 2, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+    };
+    Game.prototype.drawBear = function (x, y) {
+        this.ctx.fillStyle = '#5a3b1e';
+        // body
+        this.ctx.beginPath();
+        this.ctx.ellipse(x, y + 4, 14, 10, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        // head
+        this.ctx.beginPath();
+        this.ctx.ellipse(x, y - 6, 8, 6, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        // ears
+        this.ctx.beginPath();
+        this.ctx.arc(x - 4, y - 11, 2, 0, Math.PI * 2);
+        this.ctx.arc(x + 4, y - 11, 2, 0, Math.PI * 2);
         this.ctx.fill();
     };
     Game.prototype.isoToScreen = function (x, y) {
@@ -97,14 +148,20 @@ var Game = /** @class */ (function () {
         var screenY = (x + y) * (this.tileHeight / 2) + 50;
         return { x: screenX, y: screenY };
     };
-    Game.prototype.drawDiamond = function (cx, cy, width, height) {
+    Game.prototype.drawDiamond = function (cx, cy, width, height, fill) {
+        if (fill === void 0) { fill = false; }
         this.ctx.beginPath();
         this.ctx.moveTo(cx, cy - height / 2);
         this.ctx.lineTo(cx + width / 2, cy);
         this.ctx.lineTo(cx, cy + height / 2);
         this.ctx.lineTo(cx - width / 2, cy);
         this.ctx.closePath();
-        this.ctx.stroke();
+        if (fill) {
+            this.ctx.fill();
+        }
+        else {
+            this.ctx.stroke();
+        }
     };
     return Game;
 }());
