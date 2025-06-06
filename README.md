@@ -1,7 +1,6 @@
 # Bear Pea Hunt
 
 This repository contains a small browser game written in TypeScript. A bear roams an isometric field eating green peas in pods. The visuals now include shaded ground tiles and more detailed sprites for the bear and the pea pods. Use the arrow keys to move the bear around.
-
 ## Development
 
 Install dependencies and build the project:
