@@ -75,7 +75,6 @@ class Game {
     }
     this.groundPattern = this.ctx.createPattern(patternCanvas, 'repeat');
   }
-
   private checkPea() {
     if (this.peas[this.playerY][this.playerX]) {
       this.peas[this.playerY][this.playerX] = false;
