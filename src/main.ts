@@ -117,32 +117,81 @@ class Game {
   }
 
   private drawPeaPod(x: number, y: number) {
-    this.ctx.fillStyle = '#2e8b57';
+    const grad = this.ctx.createLinearGradient(x - 12, y, x + 12, y);
+    grad.addColorStop(0, '#1a722f');
+    grad.addColorStop(1, '#34aa46');
+    this.ctx.fillStyle = grad;
     this.ctx.beginPath();
-    this.ctx.ellipse(x, y, 10, 5, 0, 0, Math.PI * 2);
+    this.ctx.moveTo(x - 12, y);
+    this.ctx.quadraticCurveTo(x, y - 8, x + 12, y);
+    this.ctx.quadraticCurveTo(x, y + 8, x - 12, y);
+    this.ctx.closePath();
     this.ctx.fill();
-    this.ctx.fillStyle = '#9acd32';
+
+    this.ctx.fillStyle = '#b7e57d';
     for (let i = -1; i <= 1; i++) {
       this.ctx.beginPath();
-      this.ctx.arc(x + i * 4, y, 2, 0, Math.PI * 2);
+      this.ctx.arc(x + i * 6, y, 3, 0, Math.PI * 2);
       this.ctx.fill();
     }
   }
 
   private drawBear(x: number, y: number) {
-    this.ctx.fillStyle = '#5a3b1e';
-    // body
+    // body with shading
+    const bodyGrad = this.ctx.createRadialGradient(x, y + 8, 5, x, y + 8, 18);
+    bodyGrad.addColorStop(0, '#6e4a24');
+    bodyGrad.addColorStop(1, '#3b2512');
+    this.ctx.fillStyle = bodyGrad;
     this.ctx.beginPath();
-    this.ctx.ellipse(x, y + 4, 14, 10, 0, 0, Math.PI * 2);
+    this.ctx.ellipse(x, y + 8, 18, 14, 0, 0, Math.PI * 2);
     this.ctx.fill();
-    // head
+
+    // legs
+    this.ctx.fillStyle = '#3b2512';
     this.ctx.beginPath();
-    this.ctx.ellipse(x, y - 6, 8, 6, 0, 0, Math.PI * 2);
+    this.ctx.ellipse(x - 8, y + 18, 5, 8, 0, 0, Math.PI * 2);
+    this.ctx.ellipse(x + 8, y + 18, 5, 8, 0, 0, Math.PI * 2);
     this.ctx.fill();
+
+    // head with shading
+    const headGrad = this.ctx.createRadialGradient(x, y - 4, 2, x, y - 4, 10);
+    headGrad.addColorStop(0, '#6e4a24');
+    headGrad.addColorStop(1, '#3b2512');
+    this.ctx.fillStyle = headGrad;
+    this.ctx.beginPath();
+    this.ctx.ellipse(x, y - 4, 10, 8, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // muzzle
+    this.ctx.fillStyle = '#c69c6d';
+    this.ctx.beginPath();
+    this.ctx.ellipse(x, y + 1, 6, 4, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // nose
+    this.ctx.fillStyle = '#000';
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+    this.ctx.fill();
+
     // ears
+    this.ctx.fillStyle = '#3b2512';
     this.ctx.beginPath();
-    this.ctx.arc(x - 4, y - 11, 2, 0, Math.PI * 2);
-    this.ctx.arc(x + 4, y - 11, 2, 0, Math.PI * 2);
+    this.ctx.arc(x - 6, y - 9, 3, 0, Math.PI * 2);
+    this.ctx.arc(x + 6, y - 9, 3, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = '#c69c6d';
+    this.ctx.beginPath();
+    this.ctx.arc(x - 6, y - 9, 1.5, 0, Math.PI * 2);
+    this.ctx.arc(x + 6, y - 9, 1.5, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // eyes
+    this.ctx.fillStyle = '#000';
+    this.ctx.beginPath();
+    this.ctx.arc(x - 3, y - 5, 1.5, 0, Math.PI * 2);
+    this.ctx.arc(x + 3, y - 5, 1.5, 0, Math.PI * 2);
     this.ctx.fill();
   }
 
